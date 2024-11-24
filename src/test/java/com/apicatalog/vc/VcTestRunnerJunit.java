@@ -25,7 +25,7 @@ import com.apicatalog.jsonld.loader.DocumentLoader;
 import com.apicatalog.jsonld.loader.DocumentLoaderOptions;
 import com.apicatalog.jsonld.loader.SchemeRouter;
 import com.apicatalog.ld.DocumentError;
-import com.apicatalog.ld.signature.eddsa.EdDsaJcs2022Suite;
+import com.apicatalog.ld.signature.eddsa.EdDSAJcs2022Suite;
 import com.apicatalog.linkedtree.adapter.NodeAdapterError;
 import com.apicatalog.linkedtree.builder.TreeBuilderError;
 import com.apicatalog.linkedtree.jsonld.io.JsonLdReader;
@@ -63,7 +63,7 @@ public class VcTestRunnerJunit {
 
     final static VerificationKeyProvider RESOLVERS = defaultResolvers(LOADER);
 
-    public final EdDsaJcs2022Suite SUITE = new EdDsaJcs2022Suite();
+    public final EdDSAJcs2022Suite SUITE = new EdDSAJcs2022Suite();
 
     public final Verifier VERIFIER = Verifier.with(SUITE)
             .methodResolver(RESOLVERS)

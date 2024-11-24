@@ -21,7 +21,7 @@ import com.apicatalog.vc.solid.SolidProofValue;
 import com.apicatalog.vcdi.DataIntegrityProofDraft;
 import com.apicatalog.vcdi.DataIntegritySuite;
 
-public final class EdDsaJcs2022Suite extends DataIntegritySuite {
+public final class EdDSAJcs2022Suite extends DataIntegritySuite {
 
     public static final String CRYPTOSUITE_NAME = "eddsa-jcs-2022";
 
@@ -31,12 +31,12 @@ public final class EdDsaJcs2022Suite extends DataIntegritySuite {
 
     public static final CryptoSuite CRYPTO = new CryptoSuite(
             CRYPTOSUITE_NAME,
-            32,
+            256,
             new JsonCanonicalizationScheme(),
             new MessageDigest("SHA-256"),
             new NativeSignatureProvider("Ed25519"));
 
-    public EdDsaJcs2022Suite() {
+    public EdDSAJcs2022Suite() {
         super(CRYPTOSUITE_NAME, Multibase.BASE_58_BTC);
     }
 
