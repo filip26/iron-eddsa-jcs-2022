@@ -3,7 +3,6 @@ package com.apicatalog.ld.signature.eddsa;
 import java.net.URI;
 
 import com.apicatalog.controller.key.KeyPair;
-import com.apicatalog.controller.method.VerificationMethod;
 import com.apicatalog.cryptosuite.CryptoSuite;
 import com.apicatalog.cryptosuite.primitive.JsonCanonicalizationScheme;
 import com.apicatalog.cryptosuite.primitive.MessageDigest;
@@ -42,18 +41,16 @@ public final class EdDSAJcs2022Suite extends DataIntegritySuite {
 
     @Override
     public Issuer createIssuer(KeyPair keyPair) {
-        return new SolidIssuer(this, CRYPTO, keyPair, proofValueBase);
+        return new SolidIssuer(
+                this,
+                CRYPTO,
+                keyPair,
+                proofValueBase,
+                method -> new DataIntegrityProofDraft(this, CRYPTO, method));
     }
 
-    public DataIntegrityProofDraft createDraft(VerificationMethod verificationMethod, URI purpose) {
-        return new DataIntegrityProofDraft(this, CRYPTO, verificationMethod, purpose);
-    }
-
-    public DataIntegrityProofDraft createDraft(URI verificationMethod, URI purpose) {
-        return new DataIntegrityProofDraft(this, CRYPTO, verificationMethod, purpose);
-    }
-
-    protected ProofValue getProofValue(VerifiableMaterial data, VerifiableMaterial proof, byte[] proofValue, DocumentLoader loader) throws DocumentError {
+    @Override
+    protected ProofValue getProofValue(VerifiableMaterial data, VerifiableMaterial proof, byte[] proofValue, DocumentLoader loader, URI base) throws DocumentError {
         if (proofValue == null) {
             return null;
         }

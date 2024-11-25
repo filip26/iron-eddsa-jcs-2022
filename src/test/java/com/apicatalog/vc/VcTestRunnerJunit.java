@@ -30,9 +30,8 @@ import com.apicatalog.linkedtree.adapter.NodeAdapterError;
 import com.apicatalog.linkedtree.builder.TreeBuilderError;
 import com.apicatalog.linkedtree.jsonld.io.JsonLdReader;
 import com.apicatalog.linkedtree.orm.mapper.TreeReaderMapping;
-import com.apicatalog.multicodec.MulticodecDecoder;
-import com.apicatalog.multicodec.codec.KeyCodec;
 import com.apicatalog.multikey.Multikey;
+import com.apicatalog.vc.issuer.Issuer;
 import com.apicatalog.vc.loader.StaticContextLoader;
 import com.apicatalog.vc.method.resolver.ControllableKeyProvider;
 import com.apicatalog.vc.method.resolver.MethodPredicate;
@@ -103,19 +102,19 @@ public class VcTestRunnerJunit {
                     keyPairLocation = URI.create(VcTestCase.base("issuer/0001-keys.json"));
                 }
 
-                // proof options
-                final DataIntegrityProofDraft draft = SUITE.createDraft(
-                        testCase.verificationMethod,
-                        URI.create("https://w3id.org/security#assertionMethod"));
+                // issuer
+                final Issuer issuer = SUITE.createIssuer(getKeys(keyPairLocation, LOADER)).loader(LOADER);
 
+                // proof options
+                final DataIntegrityProofDraft draft = issuer.createDraft(testCase.verificationMethod);
+
+                draft.purpose(URI.create("https://w3id.org/security#assertionMethod"));
                 draft.created(testCase.created);
                 draft.domain(testCase.domain);
                 draft.challenge(testCase.challenge);
                 draft.nonce(testCase.nonce);
 
-                final JsonObject issued = SUITE.createIssuer(getKeys(keyPairLocation, LOADER))
-                        .loader(LOADER)
-                        .sign(testCase.input, draft);
+                final JsonObject issued = issuer.sign(testCase.input, draft);
 
                 assertNotNull(issued);
 
@@ -243,7 +242,7 @@ public class VcTestRunnerJunit {
 
                 // accept did:key
                 .with(MethodPredicate.methodId(DidKey::isDidKeyUrl),
-                        ControllableKeyProvider.of(new DidKeyResolver(MulticodecDecoder.getInstance(KeyCodec.ED25519_PUBLIC_KEY, KeyCodec.ED25519_PRIVATE_KEY))))
+                        ControllableKeyProvider.of(new DidKeyResolver(EdDSAJcs2022Suite.CODECS)))
 
                 .build();
     }
