@@ -19,9 +19,9 @@ import com.apicatalog.cryptosuite.SigningError;
 import com.apicatalog.cryptosuite.SigningError.SignatureErrorCode;
 import com.apicatalog.cryptosuite.VerificationError;
 import com.apicatalog.cryptosuite.VerificationError.VerificationErrorCode;
-import com.apicatalog.cryptosuite.algorithm.Signer;
+import com.apicatalog.cryptosuite.algorithm.SignatureAlgorithm;
 
-class NativeSignatureProvider implements Signer {
+class NativeSignatureProvider implements SignatureAlgorithm {
 
     private final String type;
 

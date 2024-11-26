@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.apicatalog.controller.key.KeyPair;
-import com.apicatalog.cryptosuite.SigningError;
+import com.apicatalog.cryptosuite.CryptoSuiteError;
 import com.apicatalog.cryptosuite.VerificationError;
 import com.apicatalog.did.key.DidKey;
 import com.apicatalog.did.key.DidKeyResolver;
@@ -60,12 +60,10 @@ public class VcTestRunnerJunit {
                     "classpath:",
                     new SchemeRouter().set("classpath", new ClasspathLoader())));
 
-    final static VerificationKeyProvider RESOLVERS = defaultResolvers(LOADER);
-
     public final EdDSAJcs2022Suite SUITE = new EdDSAJcs2022Suite();
 
     public final Verifier VERIFIER = Verifier.with(SUITE)
-            .methodResolver(RESOLVERS)
+            .methodResolver(defaultResolvers(LOADER))
             .loader(LOADER);
 
     public VcTestRunnerJunit(VcTestCase testCase) {
@@ -86,7 +84,7 @@ public class VcTestRunnerJunit {
                 params.put(VcdiVocab.PURPOSE.name(), testCase.purpose);
                 params.put(VcdiVocab.NONCE.name(), testCase.nonce);
 
-                final Verifiable verifiable = VERIFIER.verify(testCase.input, params);
+                final VerifiableDocument verifiable = VERIFIER.verify(testCase.input, params);
 
                 assertNotNull(verifiable);
                 assertFalse(isNegative(), "Expected error " + testCase.result);
@@ -145,10 +143,10 @@ public class VcTestRunnerJunit {
             }
 
         } catch (VerificationError e) {
-            assertException(e.verificationErrorCode() != null ? e.verificationErrorCode().name() : null, e);
+            assertException(e.code() != null ? e.code().name() : null, e);
 
-        } catch (SigningError e) {
-            assertException(e.signatureErrorCode() != null ? e.signatureErrorCode().name() : null, e);
+        } catch (CryptoSuiteError e) {
+            assertException(e.code() != null ? e.code().name() : null, e);
 
         } catch (DocumentError e) {
             assertException(e.code(), e);
@@ -233,18 +231,14 @@ public class VcTestRunnerJunit {
     }
 
     static final VerificationKeyProvider defaultResolvers(DocumentLoader loader) {
-
         return MethodSelector.create()
                 .with(MethodPredicate.methodId(
                         // accept only remote Multikey
                         m -> m.getScheme().equalsIgnoreCase("https")),
                         new RemoteMultikeyProvider(loader))
-
                 // accept did:key
                 .with(MethodPredicate.methodId(DidKey::isDidKeyUrl),
                         ControllableKeyProvider.of(new DidKeyResolver(EdDSAJcs2022Suite.CODECS)))
-
                 .build();
     }
-
 }
