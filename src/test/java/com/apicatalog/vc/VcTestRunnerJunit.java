@@ -24,23 +24,23 @@ import com.apicatalog.jsonld.json.JsonLdComparison;
 import com.apicatalog.jsonld.loader.DocumentLoader;
 import com.apicatalog.jsonld.loader.DocumentLoaderOptions;
 import com.apicatalog.jsonld.loader.SchemeRouter;
-import com.apicatalog.ld.DocumentError;
 import com.apicatalog.ld.signature.eddsa.EdDSAJcs2022Suite;
 import com.apicatalog.linkedtree.adapter.NodeAdapterError;
 import com.apicatalog.linkedtree.builder.TreeBuilderError;
 import com.apicatalog.linkedtree.jsonld.io.JsonLdReader;
 import com.apicatalog.linkedtree.orm.mapper.TreeReaderMapping;
 import com.apicatalog.multikey.Multikey;
+import com.apicatalog.vc.di.DataIntegrityDraft;
+import com.apicatalog.vc.di.VcdiVocab;
 import com.apicatalog.vc.issuer.Issuer;
 import com.apicatalog.vc.loader.StaticContextLoader;
-import com.apicatalog.vc.method.resolver.ControllableKeyProvider;
-import com.apicatalog.vc.method.resolver.MethodPredicate;
-import com.apicatalog.vc.method.resolver.MethodSelector;
-import com.apicatalog.vc.method.resolver.RemoteMultikeyProvider;
-import com.apicatalog.vc.method.resolver.VerificationKeyProvider;
+import com.apicatalog.vc.method.ControllableKeyProvider;
+import com.apicatalog.vc.method.MethodPredicate;
+import com.apicatalog.vc.method.MethodSelector;
+import com.apicatalog.vc.method.RemoteMultikeyProvider;
+import com.apicatalog.vc.method.VerificationKeyProvider;
+import com.apicatalog.vc.model.DocumentError;
 import com.apicatalog.vc.verifier.Verifier;
-import com.apicatalog.vcdi.DataIntegrityProofDraft;
-import com.apicatalog.vcdi.VcdiVocab;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
@@ -104,7 +104,7 @@ public class VcTestRunnerJunit {
                 final Issuer issuer = SUITE.createIssuer(getKeys(keyPairLocation, LOADER)).loader(LOADER);
 
                 // proof options
-                final DataIntegrityProofDraft draft = issuer.createDraft(testCase.verificationMethod);
+                final DataIntegrityDraft draft = issuer.createDraft(testCase.verificationMethod);
 
                 draft.purpose(URI.create("https://w3id.org/security#assertionMethod"));
                 draft.created(testCase.created);
